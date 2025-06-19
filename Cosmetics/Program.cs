@@ -7,6 +7,8 @@ using Cosmetics.Repositories.Interface;
 using Cosmetics.Repositories.UnitOfWork;
 using Cosmetics.Service.Affiliate;
 using Cosmetics.Service.Affiliate.Interface;
+using Cosmetics.Service.Gemini;
+
 
 //using Cosmetics.Service.Affiliate;
 using Cosmetics.Service.OTP;
@@ -148,6 +150,9 @@ builder.Services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepo
 builder.Services.AddScoped<ICartDetailRepository, CartDetailRepository>();
 builder.Services.AddScoped<IKOLVideoRepository, KOLVideoRepository>();
 builder.Services.AddScoped<IAffiliateProfileRepository, AffiliateProfileRepository>();
+builder.Services.AddControllers();
+builder.Services.AddHttpClient<GeminiChatService>();
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 //payOS
 builder.Services.AddSingleton<PayOS>(sp =>
 	new PayOS(
