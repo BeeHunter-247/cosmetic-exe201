@@ -21,6 +21,12 @@ namespace Cosmetics.Repositories.UnitOfWork
         public IKOLVideoRepository KolVideos { get; }
         public IAffiliateProfileRepository AffiliateProfiles { get; }
 
+        
+        public IGenericRepository<Image> Image { get; }
+        public IGenericRepository<SkinAnalysisResult> SkinAnalysisResult { get; }
+
+        
+
 
         // Uncomment if you need AffiliateLinks later
         // public IAffiliateLinkRepository AffiliateLinks { get; }
@@ -37,8 +43,11 @@ namespace Cosmetics.Repositories.UnitOfWork
             IPaymentTransactionRepository paymentTransactionRepository,
             ICartDetailRepository cartDetailRepository,
             IKOLVideoRepository kolVideoRepository,
-            IAffiliateProfileRepository affiliateProfileRepository
+            IAffiliateProfileRepository affiliateProfileRepository,
+            IGenericRepository<Image> imageRepository,
+            IGenericRepository<SkinAnalysisResult> skinAnalysisResultRepository
 
+          
             // Uncomment and add if needed
             // IAffiliateLinkRepository affiliateLinkRepository
             )
@@ -54,7 +63,9 @@ namespace Cosmetics.Repositories.UnitOfWork
             PaymentTransactions = paymentTransactionRepository; // Fixed: Assigned
             CartDetails = cartDetailRepository;
             KolVideos = kolVideoRepository;
-            AffiliateProfiles = affiliateProfileRepository; 
+            AffiliateProfiles = affiliateProfileRepository;
+            Image = imageRepository;
+            SkinAnalysisResult = skinAnalysisResultRepository;
 
             // Uncomment if needed
             // AffiliateLinks = affiliateLinkRepository;

@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using Cosmetics.DTO.User;
+using Cosmetics.DTO.YouCamApiSettings;
 using Cosmetics.Interfaces;
 using Cosmetics.Models;
 using Cosmetics.Repositories;
@@ -11,6 +12,7 @@ using Cosmetics.Service.Affiliate.Interface;
 //using Cosmetics.Service.Affiliate;
 using Cosmetics.Service.OTP;
 using Cosmetics.Service.Payment;
+using Cosmetics.Service.SkinAnalysisService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -98,6 +100,8 @@ builder.Services.AddSwaggerGen(option =>
 
 
 
+
+
 builder.Services.AddDbContext<ComedicShopDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -164,6 +168,13 @@ builder.Services.AddHostedService<ExpiredOtpCleanerService>();
 
 // Đăng ký IProductService (nếu đã có ProductService)
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddHttpClient<ISkinAnalysisService, SkinAnalysisService>(client =>
+{
+    string? baseUrl = builder.Configuration["YouCamApi:BaseUrl"];
+    client.BaseAddress = string.IsNullOrEmpty(baseUrl) ? null : new Uri(baseUrl);
+});
+
+
 
 
 
@@ -174,7 +185,6 @@ builder.Services.AddSwaggerGen();
 // Other service registrations
 
 var app = builder.Build();
-
 // Configure middleware, static files, authentication, authorization, etc.
 
     app.UseCors("corspolicy");

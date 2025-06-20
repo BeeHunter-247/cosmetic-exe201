@@ -20,5 +20,7 @@ namespace Cosmetics.Interfaces
             int? page = null,
             int? pageSize = null,
             Func<IQueryable<T>, IQueryable<T>>[] includeOperations = null);
+        Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+
     }
 }
