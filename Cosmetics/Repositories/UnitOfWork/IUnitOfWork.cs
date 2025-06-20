@@ -17,6 +17,10 @@ namespace Cosmetics.Repositories.UnitOfWork
         ICartDetailRepository CartDetails { get; }
         IKOLVideoRepository KolVideos { get; }
         IAffiliateProfileRepository AffiliateProfiles { get; }
+        
+        IGenericRepository<Image> Image { get; }
+        IGenericRepository<SkinAnalysisResult> SkinAnalysisResult { get; }
+
 
 
 

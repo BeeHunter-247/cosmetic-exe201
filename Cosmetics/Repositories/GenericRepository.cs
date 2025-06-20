@@ -36,6 +36,12 @@ namespace Cosmetics.Repositories
             await _dbSet.AddAsync(entity);
         }
 
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
+
+
         public async Task AddRangeAsync(IEnumerable<T> entities)
         {
             await _dbSet.AddRangeAsync(entities);

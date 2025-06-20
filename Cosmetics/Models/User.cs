@@ -41,5 +41,7 @@ public partial class User
 
     public virtual ICollection<ClickTracking> ClickTrackings { get; set; } = new List<ClickTracking>();
 
+    public virtual ICollection<Image> Images { get; set; } = new List<Image>();
+
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }
