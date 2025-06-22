@@ -453,6 +453,51 @@ namespace ComedicShopAPI.Controllers
             return jwtTokenHandler.WriteToken(token);
         }
 
+        [HttpPut("UpdateAddress")]
+        [Authorize]
+        public async Task<IActionResult> UpdateAdress(UpdateAddressModel model)
+        {
+            if(!ModelState.IsValid || string.IsNullOrWhiteSpace(model.Address))
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Address is required",
+                    Data = ModelState
+                });
+            }
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if(userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid user ID"
+                });
+            }
+
+            var user = await _unitOfWork.Users.GetByIdAsync(userId);
+            if(user == null)
+            {
+                return NotFound(new ApiResponse
+                {
+                    Success = false,
+                    Message = "User not found"
+                });
+            }
+
+            user.Address = model.Address;
+            await _unitOfWork.CompleteAsync();
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Address updated successfully",
+                Data = user.Address
+            });
+        }
+
         private bool IsAdmin(ClaimsPrincipal user)
         {
             return user.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Administrator");
