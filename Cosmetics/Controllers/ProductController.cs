@@ -275,5 +275,49 @@ namespace Cosmetics.Controllers
                 Data = _mapper.Map<ProductDTO>(existingProduct)
             });
         }
+
+        [HttpGet("GetTopSellingProducts")]
+        public async Task<IActionResult> GetTopSellingProducts([FromQuery]int top = 10)
+        {
+            var orderDetails = await _unitOfWork.OrderDetails.GetAllAsync();
+
+            var topProductsGrouped = orderDetails
+                .Where(o => o.ProductId != null)
+                .GroupBy(o => o.ProductId.Value)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    TotalSold = g.Sum(o => o.Quantity),
+                })
+                .OrderByDescending(o => o.TotalSold)
+                .Take(top)
+                .ToList();
+
+            var topProductIds = topProductsGrouped.Select(o => o.ProductId).ToList();
+
+            var products = await _unitOfWork.Products.GetAsync(
+                filter: p => topProductIds.Contains(p.ProductId),
+                includeOperations: new Func<IQueryable<Product>, IQueryable<Product>>[]
+                {
+                    q => q.Include(p => p.Brand),
+                    q => q.Include(p => p.Category)
+                }
+              );
+
+            var sortedPRoducts = topProductsGrouped
+                .Join(products, g => g.ProductId, p => p.ProductId, (g, p) => new {Product = p, ToTalSold = g.TotalSold})
+                .OrderByDescending(x => x.ToTalSold)
+                .Select(x => x.Product)
+                .ToList();
+
+            var result = _mapper.Map<List<ProductDTO>>(sortedPRoducts);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Top selling products retrieved successfully",
+                Data = result
+            });
+        }
     }
 }
