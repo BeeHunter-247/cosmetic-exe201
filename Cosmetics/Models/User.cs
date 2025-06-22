@@ -17,6 +17,8 @@ public partial class User
 
     public string Phone { get; set; }
 
+    public string Address { get; set; }
+
     public DateTime? CreateAt { get; set; }
 
     public string RefreshToken { get; set; }

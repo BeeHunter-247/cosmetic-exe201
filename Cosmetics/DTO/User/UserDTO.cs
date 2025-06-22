@@ -13,5 +13,12 @@
         public string Phone { get; set; }
 
         public int RoleType { get; set; }
+
+        public string Address { get; set; }
+    }
+
+    public class UpdateAddressModel
+    {
+        public string Address { get; set; }
     }
 }

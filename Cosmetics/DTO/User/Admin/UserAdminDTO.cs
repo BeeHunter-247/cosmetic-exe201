@@ -11,5 +11,7 @@
         public int RoleType { get; set; }
         public string? RoleName { get; set; }
         public string UserStatus { get; set; }
+
+        public string Address { get; set; }
     }
 }
