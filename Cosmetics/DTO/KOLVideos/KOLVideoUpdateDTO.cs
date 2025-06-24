@@ -1,7 +1,10 @@
 ﻿namespace Cosmetics.DTO.KOLVideos
 {
-	public class KOLVideoUpdateDTO : KOLVideoCreateDTO
+	public class KOLVideoUpdateDTO
 	{
-        public Guid VideoId { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public Guid? ProductId { get; set; }
+        public bool? IsActive { get; set; }
     }
 }
