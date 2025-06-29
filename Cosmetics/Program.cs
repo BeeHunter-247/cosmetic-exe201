@@ -17,6 +17,7 @@ using Cosmetics.Service.Payment;
 using Cosmetics.Service.SkinAnalysisService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -98,12 +99,6 @@ builder.Services.AddSwaggerGen(option =>
     option.EnableAnnotations();
 });
 
-
-
-
-
-
-
 builder.Services.AddDbContext<ComedicShopDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -157,6 +152,12 @@ builder.Services.AddScoped<IAffiliateProfileRepository, AffiliateProfileReposito
 builder.Services.AddControllers();
 builder.Services.AddHttpClient<GeminiChatService>();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 300 * 1024 * 1024;
+});
+
 //payOS
 builder.Services.AddSingleton<PayOS>(sp =>
 	new PayOS(
