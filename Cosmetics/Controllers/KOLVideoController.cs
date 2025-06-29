@@ -48,6 +48,7 @@ namespace Cosmetics.Controllers
 		}
 
 		[HttpPost("upload")]
+		[RequestSizeLimit(300 * 1024 * 1024)]
 		public async Task<IActionResult> UploadVideo([FromForm] KOLVideoCreateDTO dto)
 		{
 			if(dto.VideoFile == null || dto.VideoFile.Length == 0)
@@ -63,18 +64,18 @@ namespace Cosmetics.Controllers
 				return BadRequest("Invalid video format. Allowed formats: mp4, mov, avi, mkv, webm.");
 			}
 
-			if(dto.VideoFile.Length > 100 * 1024 * 1024)
+			if(dto.VideoFile.Length > 300 * 1024 * 1024)
 			{
-				return BadRequest("File too large. Max size allowed is 100MD");
+				return BadRequest("File too large. Max size allowed is 300MB");
 			}
 
 			var uploadParams = new VideoUploadParams
 			{
 				File = new CloudinaryDotNet.FileDescription(dto.VideoFile.FileName, dto.VideoFile.OpenReadStream()),
-				Folder = "kol-videos"
+				Folder = "kol-videos",
 			};
 
-			var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+			var uploadResult = await _cloudinary.UploadLargeAsync(uploadParams);
 
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 			var profile = await _unitOfWork.AffiliateProfiles.GetByUserIdAsync(userId);
