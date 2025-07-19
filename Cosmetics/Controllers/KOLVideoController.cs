@@ -244,5 +244,23 @@ namespace Cosmetics.Controllers
 				Data = videoDTO
 			});
 		}
+
+        [HttpGet("getAllVideosByAffiliate/{affiliateId:guid}")]
+        public async Task<IActionResult> GetAllVideosByAffiliateId(Guid affiliateId)
+        {
+            var profile = await _unitOfWork.AffiliateProfiles.GetByIdAsync(affiliateId);
+            if (profile == null)
+            {
+                return BadRequest("Affiliate profile not found");
+            }
+
+            var videos = await _unitOfWork.KolVideos.GetAllByAffiliateProfileIdAsync(affiliateId);
+            if (videos == null || !videos.Any())
+            {
+                return Ok(new { Message = "You currently don’t have any videos." });
+            }
+
+            return Ok(_mapper.Map<List<KOLVideoDTO>>(videos));
+        }
     }
 }
