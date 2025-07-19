@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace Cosmetics.Controllers
 {
-	[Authorize(Roles = "Affiliates")]
+	[Authorize]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class KOLVideoController : ControllerBase
@@ -28,7 +28,8 @@ namespace Cosmetics.Controllers
 			_cloudinary = cloudinary;
         }
 
-		[HttpGet("myVideos")]
+        [Authorize(Roles = "Affiliates")]
+        [HttpGet("myVideos")]
 		public async Task<IActionResult> GetMyVideos()
 		{
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -47,7 +48,8 @@ namespace Cosmetics.Controllers
 			return Ok(_mapper.Map<List<KOLVideoDTO>>(videos));
 		}
 
-		[HttpPost("upload")]
+        [Authorize(Roles = "Affiliates")]
+        [HttpPost("upload")]
 		[RequestSizeLimit(300 * 1024 * 1024)]
 		public async Task<IActionResult> UploadVideo([FromForm] KOLVideoCreateDTO dto)
 		{
@@ -112,7 +114,8 @@ namespace Cosmetics.Controllers
 			}
 		}
 
-		[HttpGet("{id:guid}")]
+        [Authorize(Roles = "Affiliates")]
+        [HttpGet("{id:guid}")]
 		public async Task<IActionResult> GetVideoById(Guid id)
 		{
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -138,7 +141,8 @@ namespace Cosmetics.Controllers
 			});
 		}
 
-		[HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Affiliates")]
+        [HttpDelete("{id:guid}")]
 		public async Task<IActionResult> DeleteVideo(Guid id)
 		{
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -164,7 +168,8 @@ namespace Cosmetics.Controllers
 			});
         }
 
-		[HttpPut("{id:guid}")]
+        [Authorize(Roles = "Affiliates")]
+        [HttpPut("{id:guid}")]
 		public async Task<IActionResult> UpdateVideo(Guid id, [FromBody] KOLVideoUpdateDTO dto)
 		{
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -195,5 +200,49 @@ namespace Cosmetics.Controllers
 				Data = _mapper.Map<KOLVideoDTO>(video)
 			});
         }
+
+		[HttpGet("getAllVideos")]
+		public async Task<IActionResult> GetAllVideos()
+		{
+			var videos = await _unitOfWork.KolVideos.GetAllAsync();
+
+			if(videos == null || !videos.Any())
+			{
+				return BadRequest(new ApiResponse
+				{
+					Success = false,
+					Message = "There are currently no videos in the system.",
+				});
+			}
+
+			var videoDTOs = _mapper.Map<List<KOLVideoDTO>>(videos);
+
+			return Ok(new ApiResponse
+			{
+				Success = true,
+				Message = "Successfully retrieved all videos",
+				Data = videoDTOs
+			});
+		}
+
+		[HttpGet("getAllVideosBy/{id:guid}")]
+		public async Task<IActionResult> GetAllVideosById(Guid id)
+		{
+			var video = await _unitOfWork.KolVideos.GetByIdAsync(id);
+
+			if(video == null)
+			{
+				return NotFound($"No video found with ID: {id}");
+			}
+
+			var videoDTO = _mapper.Map<KOLVideoDTO>(video);
+
+			return Ok(new ApiResponse
+			{
+				Success = true,
+				Message = $"Successfully retrieved the video by ID: {id}",
+				Data = videoDTO
+			});
+		}
     }
 }
