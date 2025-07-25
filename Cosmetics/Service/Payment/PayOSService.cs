@@ -72,9 +72,9 @@ namespace Cosmetics.Service.Payment
 			amount: (int)order.TotalAmount!,
 			description: shortDescription,
 			items: items,
-			returnUrl: "https://localhost:3000/HandlePayment",
-			cancelUrl: "https://localhost:3000/HandlePayment"
-			);
+			returnUrl: "https://cosmotopia.vercel.app/HandlePayment",
+			cancelUrl: "https://cosmotopia.vercel.app/HandlePayment"
+            );
 
 			var paymentResponse = await _payOS.createPaymentLink(paymentData);
 			return paymentResponse.checkoutUrl;
